@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TEST SEND INFORMATION AT 30 TIMES PER SECOND</title>
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            console.log('client init');
+            var socket = io();
+            var samples = [];
+            
+            socket.on('sample', function(sample) {
+                sample.clientTime = Date.now();
+                samples.push(sample);
+            });
+            
+            socket.on('finished', function() {
+               samples.forEach(function(sample) {
+                    console.log('server time:', sample.serverTime, 'client time:', sample.clientTime);
+               });
+            });
+        </script>
+    </body>
+</html>
