@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TEST SEND INFORMATION AT 30 TIMES PER SECOND</title>
+    <script src="/js/engine.io.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      console.log('client init');
+      var socket = new eio.Socket('ws://localhost:8080/');
+      var samples = [];
+
+      socket.on('open', function() {
+        socket.on('message', function(data) {
+          processData(data);
+        });
+      });
+
+      function processData(data) {
+        if (data.indexOf('sample') != -1) {
+          var sample = {
+            serverTime: data.replace('sample ', ''),
+            clientTime: Date.now()
+          };
+
+          samples.push(sample);
+        }
+
+        else if (data.indexOf('finished') != -1) {
+          samples.forEach(function(sample) {
+            console.log('server time:', sample.serverTime, 'client time:', sample.clientTime);
+          });
+        }
+      }
+          
+/*        
+      socket.on('sample', function(sample) {
+        sample.clientTime = Date.now();
+        samples.push(sample);
+      });
+          
+      socket.on('finished', function() {
+        samples.forEach(function(sample) {
+          console.log('server time:', sample.serverTime, 'client time:', sample.clientTime);
+        });
+      });
+*/      
+    </script>
+  </body>
+</html>
+
